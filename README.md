@@ -22,30 +22,22 @@ yarn add json-locale-translator
 
 ## Usage
 
+```bash
+npm run translate
+```
+
 ### Basic Usage
 
+1. **Create a Source File**
+
 ```bash
-translate-locale -s path/to/source.json -t targetLanguage
+mkdir locales && echo {} > locales\en.json
 ```
 
-### Options
+2. **Interactive Translation (Recommended)**
 
 ```bash
-Options:
-  -s, --source <path>    Source JSON file path (required)
-  -t, --target <lang>    Target language code (e.g., es, fr, de) (required)
-  -o, --output <path>    Output file path (optional)
-  -h, --help            Display help information
-```
-
-### Examples
-
-```bash
-# Translate to Spanish
-translate-locale -s locales/en.json -t es
-
-# Translate to French with custom output path
-translate-locale -s locales/en.json -t fr -o locales/french.json
+npm run translate -- -s locales/en.json -f en -t es
 ```
 
 ### Sample Input/Output
@@ -105,6 +97,21 @@ npm install
 
 # Link for local development
 npm link
+```
+
+## Project Structure
+
+```
+json-locale-translator/
+├── src/
+│   └── index.js          # Main CLI tool
+├── example/
+│   ├── en.json          # Source example
+│   └── es.json          # Translated example
+├── scripts/
+│   └── batch-translate.js # Batch translation script
+├── package.json
+└── README.md
 ```
 
 ## Contributing

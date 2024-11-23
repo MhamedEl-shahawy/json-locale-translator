@@ -1,22 +1,77 @@
 #!/usr/bin/env node
 
-const { program } = require("commander");
-const translate = require("google-translate-api-x");
-const fs = require("fs-extra");
-const chalk = require("chalk");
-const path = require("path");
+import { program } from "commander";
+import translate from "google-translate-api-x";
+import fs from "fs-extra";
+import chalk from "chalk";
+import path from "path";
+import inquirer from "inquirer";
 
-async function translateObject(obj, targetLang) {
+// Define available languages
+const LANGUAGES = {
+  en: "English",
+  es: "Spanish",
+  fr: "French",
+  de: "German",
+  it: "Italian",
+  pt: "Portuguese",
+  ru: "Russian",
+  ja: "Japanese",
+  ko: "Korean",
+  zh: "Chinese",
+  ar: "Arabic",
+  hi: "Hindi",
+  nl: "Dutch",
+  pl: "Polish",
+  tr: "Turkish",
+  vi: "Vietnamese",
+  th: "Thai",
+  sv: "Swedish",
+  da: "Danish",
+  fi: "Finnish",
+};
+
+async function selectLanguages() {
+  const questions = [
+    {
+      type: "list",
+      name: "from",
+      message: "Select source language:",
+      choices: Object.entries(LANGUAGES).map(([code, name]) => ({
+        name: `${name} (${code})`,
+        value: code,
+      })),
+    },
+    {
+      type: "list",
+      name: "to",
+      message: "Select target language:",
+      choices: Object.entries(LANGUAGES).map(([code, name]) => ({
+        name: `${name} (${code})`,
+        value: code,
+      })),
+    },
+  ];
+
+  return inquirer.prompt(questions);
+}
+
+async function translateObject(obj, fromLang, toLang) {
   const translated = {};
 
   for (const [key, value] of Object.entries(obj)) {
-    if (typeof value === "object") {
-      translated[key] = await translateObject(value, targetLang);
+    if (typeof value === "object" && value !== null) {
+      translated[key] = await translateObject(value, fromLang, toLang);
     } else if (typeof value === "string") {
       try {
-        const result = await translate(value, { to: targetLang });
+        const result = await translate(value, {
+          from: fromLang,
+          to: toLang,
+        });
         translated[key] = result.text;
-        console.log(chalk.green(`✓ Translated: ${value} → ${result.text}`));
+        console.log(
+          chalk.green(`✓ [${fromLang} → ${toLang}] ${value} → ${result.text}`)
+        );
       } catch (error) {
         console.error(chalk.red(`✗ Failed to translate: ${value}`));
         translated[key] = value;
@@ -32,32 +87,62 @@ async function translateObject(obj, targetLang) {
 async function main() {
   program
     .name("translate-locale")
-    .description("Translate JSON locale files to different languages")
-    .requiredOption("-s, --source <path>", "Source JSON file path")
-    .requiredOption(
-      "-t, --target <lang>",
-      "Target language code (e.g., es, fr, de)"
-    )
+    .description("Translate JSON locale files between any languages")
+    .option("-s, --source <path>", "Source JSON file path")
+    .option("-f, --from <lang>", "Source language code")
+    .option("-t, --to <lang>", "Target language code")
     .option("-o, --output <path>", "Output file path")
+    .option("-i, --interactive", "Use interactive mode")
     .parse(process.argv);
 
   const options = program.opts();
 
   try {
+    // If no source file specified, prompt for it
+    if (!options.source) {
+      const { sourceFile } = await inquirer.prompt([
+        {
+          type: "input",
+          name: "sourceFile",
+          message: "Enter the path to your source JSON file:",
+          validate: (input) => fs.existsSync(input) || "File does not exist",
+        },
+      ]);
+      options.source = sourceFile;
+    }
+
+    // Interactive mode or missing language options
+    if (options.interactive || !options.from || !options.to) {
+      const languages = await selectLanguages();
+      options.from = languages.from;
+      options.to = languages.to;
+    }
+
     // Read source file
     const sourceData = await fs.readJson(options.source);
 
+    // Show translation info
+    console.log(chalk.blue("\nTranslation Details:"));
+    console.log(
+      chalk.blue(`From: ${LANGUAGES[options.from]} (${options.from})`)
+    );
+    console.log(chalk.blue(`To: ${LANGUAGES[options.to]} (${options.to})`));
+    console.log(chalk.blue("Starting translation...\n"));
+
     // Translate the content
-    console.log(chalk.blue("Starting translation..."));
-    const translatedData = await translateObject(sourceData, options.target);
+    const translatedData = await translateObject(
+      sourceData,
+      options.from,
+      options.to
+    );
 
     // Determine output path
     const outputPath =
       options.output ||
-      path.join(
-        path.dirname(options.source),
-        `${path.basename(options.source, ".json")}.${options.target}.json`
-      );
+      path.join(path.dirname(options.source), `${options.to}.json`);
+
+    // Create directory if it doesn't exist
+    await fs.ensureDir(path.dirname(outputPath));
 
     // Write translated file
     await fs.writeJson(outputPath, translatedData, { spaces: 2 });
