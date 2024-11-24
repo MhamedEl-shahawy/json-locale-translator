@@ -1,5 +1,7 @@
 # JSON Locale Translator
 
+[![npm version](https://badge.fury.io/js/json-locale-translator.svg)](https://www.npmjs.com/package/json-locale-translator)
+
 A command-line tool to translate JSON-based locale files using Google Translate.
 
 ## Features
