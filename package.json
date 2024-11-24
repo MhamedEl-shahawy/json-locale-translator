@@ -15,8 +15,6 @@
     "translate:fr": "node src/index.js -s example/en.json -f en -t fr",
     "translate:de": "node src/index.js -s example/en.json -f en -t de",
     "translate:all": "npm run translate:es && npm run translate:fr && npm run translate:de",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
-    "prepublishOnly": "npm test",
     "publish:patch": "npm version patch && npm publish",
     "publish:minor": "npm version minor && npm publish",
     "publish:major": "npm version major && npm publish"
