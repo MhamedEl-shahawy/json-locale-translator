@@ -1,26 +1,36 @@
 {
   "name": "json-locale-translator",
-  "version": "1.0.0",
-  "description": "A CLI tool to translate JSON locale files between multiple languages",
+  "version": "1.0.1",
+  "description": "A CLI tool for translating JSON locale files between multiple languages",
   "type": "module",
   "main": "src/index.js",
   "bin": {
-    "translate-locale": "./src/index.js"
+    "json-locale-translator": "./src/index.js"
   },
   "scripts": {
     "start": "node src/index.js -i",
     "translate": "node src/index.js",
     "translate:interactive": "node src/index.js -i",
+    "translate:es": "node src/index.js -s example/en.json -f en -t es",
+    "translate:fr": "node src/index.js -s example/en.json -f en -t fr",
+    "translate:de": "node src/index.js -s example/en.json -f en -t de",
+    "translate:all": "npm run translate:es && npm run translate:fr && npm run translate:de",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
-    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch"
+    "prepublishOnly": "npm test",
+    "publish:patch": "npm version patch && npm publish",
+    "publish:minor": "npm version minor && npm publish",
+    "publish:major": "npm version major && npm publish"
   },
   "keywords": [
     "translation",
     "i18n",
     "localization",
-    "cli",
     "json",
-    "google-translate"
+    "cli",
+    "translate",
+    "language",
+    "locale",
+    "internationalization"
   ],
   "author": "Mohamed Elshahawy",
   "license": "MIT",
@@ -31,12 +41,6 @@
     "google-translate-api-x": "^10.6.7",
     "inquirer": "^9.2.12"
   },
-  "devDependencies": {
-    "jest": "^29.7.0"
-  },
-  "engines": {
-    "node": ">=14.0.0"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/MhamedEl-shahawy/json-locale-translator.git"
@@ -44,5 +48,13 @@
   "bugs": {
     "url": "https://github.com/MhamedEl-shahawy/json-locale-translator/issues"
   },
-  "homepage": "https://github.com/MhamedEl-shahawy/json-locale-translator#readme"
+  "homepage": "https://github.com/MhamedEl-shahawy/json-locale-translator#readme",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "files": [
+    "src/",
+    "README.md",
+    "LICENSE"
+  ]
 }
