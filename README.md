@@ -18,31 +18,64 @@ A command-line tool to translate JSON-based locale files using Google Translate.
 # Using npm
 npm install -g json-locale-translator
 
+# Using locally
+npm install json-locale-translator
+
 # Using yarn
 yarn add -g json-locale-translator
+
+# Using locally yarn
+yarn add json-locale-translator
+
+
 ```
 
 ## Usage
 
-#### Show help
+### Using globally
+
+**Show help**
 
 ```bash
 json-locale-translator --help
 ```
 
-#### Translate a file
+**Translate a file**
 
 ```bash
 json-locale-translator -s example/en.json -f en -t es
 ```
 
-#### Interactive mode
+**Interactive mode**
 
 ```bash
 json-locale-translator -i
 ```
 
-### Basic Usage
+### Using locally
+
+1. **Then add scripts to your project's package.json:**
+
+```json
+"scripts": {
+ "translate": "json-locale-translator",
+    "translate:es": "json-locale-translator -s example/en.json -f en -t es",
+    "translate:fr": "json-locale-translator -s example/en.json -f en -t fr",
+    "translate:interactive": "json-locale-translator -i"
+  }
+```
+
+```bash
+npm run translate
+```
+
+2. **use with npx**
+
+```bash
+npx json-locale-translator -s example/en.json -f en -t es
+```
+
+### Basic Usage (with global installation)
 
 1. **Create a Source File**
 

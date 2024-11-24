@@ -1,6 +1,6 @@
 {
   "name": "json-locale-translator",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A CLI tool for translating JSON locale files between multiple languages",
   "type": "module",
   "main": "src/index.js",
@@ -28,7 +28,8 @@
     "translate",
     "language",
     "locale",
-    "internationalization"
+    "internationalization",
+    "i18n"
   ],
   "author": "Mohamed Elshahawy",
   "license": "MIT",
