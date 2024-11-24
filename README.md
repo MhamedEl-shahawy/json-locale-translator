@@ -16,16 +16,30 @@ A command-line tool to translate JSON-based locale files using Google Translate.
 
 ```bash
 # Using npm
-npm install json-locale-translator
+npm install -g json-locale-translator
 
 # Using yarn
-yarn add json-locale-translator
+yarn add -g json-locale-translator
 ```
 
 ## Usage
 
+# Show help
+
 ```bash
-npm run translate
+json-locale-translator --help
+```
+
+# Translate a file
+
+```bash
+json-locale-translator -s example/en.json -f en -t es
+```
+
+# Interactive mode
+
+```bash
+json-locale-translator -i
 ```
 
 ### Basic Usage
@@ -39,7 +53,7 @@ mkdir locales && echo {} > locales\en.json
 2. **Interactive Translation (Recommended)**
 
 ```bash
-npm run translate -- -s locales/en.json -f en -t es
+json-locale-translator -s example/en.json -f en -t es
 ```
 
 ### Sample Input/Output
