@@ -24,19 +24,19 @@ yarn add -g json-locale-translator
 
 ## Usage
 
-# Show help
+#### Show help
 
 ```bash
 json-locale-translator --help
 ```
 
-# Translate a file
+#### Translate a file
 
 ```bash
 json-locale-translator -s example/en.json -f en -t es
 ```
 
-# Interactive mode
+#### Interactive mode
 
 ```bash
 json-locale-translator -i
