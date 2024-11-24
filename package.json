@@ -1,6 +1,6 @@
 {
   "name": "json-locale-translator",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A CLI tool for translating JSON locale files between multiple languages",
   "type": "module",
   "main": "src/index.js",
