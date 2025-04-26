@@ -11,6 +11,7 @@ A command-line tool to translate JSON-based locale files using Google Translate.
 - 🎯 Handles nested JSON objects
 - 💪 Preserves original keys
 - 🎨 Colorful console output for better visibility
+- Keep old originale translations if alredy exist
 
 ## Installation
 
@@ -116,6 +117,9 @@ Output (`es.json`):
   }
 }
 ```
+
+### Force replacing
+This program translate only the new keys. If you want replacing all file content, add the --force-replace param to command line.
 
 ## Supported Languages
 
