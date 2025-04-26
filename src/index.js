@@ -121,6 +121,12 @@ async function main() {
     // Read source file
     const sourceData = await fs.readJson(options.source);
 
+    // Check if target file exists, if yes, parse it
+    let targetData = {};
+    if (options.output && fs.existsSync(options.output)) {
+      targetData = await fs.readJson(options.output);
+    }
+
     // Show translation info
     console.log(chalk.blue("\nTranslation Details:"));
     console.log(
