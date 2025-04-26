@@ -93,6 +93,7 @@ async function main() {
     .option("-t, --to <lang>", "Target language code")
     .option("-o, --output <path>", "Output file path")
     .option("-i, --interactive", "Use interactive mode")
+    .option("--force-replace", "Force replace existing translations", false)
     .parse(process.argv);
 
   const options = program.opts();
@@ -133,14 +134,17 @@ async function main() {
       chalk.blue(`From: ${LANGUAGES[options.from]} (${options.from})`)
     );
     console.log(chalk.blue(`To: ${LANGUAGES[options.to]} (${options.to})`));
+    console.log(chalk.blue(`Replace existing content ${options.forceReplace}`));
     console.log(chalk.blue("Starting translation...\n"));
 
     // Translate the content
-    const translatedData = await translateObject(
-      sourceData,
-      options.from,
-      options.to
-    );
+    const translatedData = await translateObject({
+      obj: sourceData,
+      translated: targetData,
+      fromLang: options.from,
+      toLang: options.to,
+      replace: options.forceReplace
+    })
 
     // Determine output path
     const outputPath =
