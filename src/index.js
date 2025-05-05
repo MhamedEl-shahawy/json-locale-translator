@@ -56,25 +56,25 @@ async function selectLanguages() {
   return inquirer.prompt(questions);
 }
 
-async function translateObject(obj, fromLang, toLang) {
-  const translated = {};
-
+async function translateObject({obj, translated={}, fromLang, toLang, replace=false}) {
   for (const [key, value] of Object.entries(obj)) {
     if (typeof value === "object" && value !== null) {
-      translated[key] = await translateObject(value, fromLang, toLang);
+      translated[key] = await translateObject({obj: value, translated: translated[key] || {}, fromLang, toLang, replace});
     } else if (typeof value === "string") {
-      try {
-        const result = await translate(value, {
-          from: fromLang,
-          to: toLang,
-        });
-        translated[key] = result.text;
-        console.log(
-          chalk.green(`✓ [${fromLang} → ${toLang}] ${value} → ${result.text}`)
-        );
-      } catch (error) {
-        console.error(chalk.red(`✗ Failed to translate: ${value}`));
-        translated[key] = value;
+      if (!translated[key] || replace) {
+        try {
+          const result = await translate(value, {
+            from: fromLang,
+            to: toLang,
+          });
+          translated[key] = result.text;
+          console.log(
+              chalk.green(`✓ [${fromLang} → ${toLang}] ${value} → ${result.text}`)
+          );
+        } catch (error) {
+          console.error(chalk.red(`✗ Failed to translate: ${value}`));
+          translated[key] = value;
+        }
       }
     } else {
       translated[key] = value;
@@ -93,6 +93,7 @@ async function main() {
     .option("-t, --to <lang>", "Target language code")
     .option("-o, --output <path>", "Output file path")
     .option("-i, --interactive", "Use interactive mode")
+    .option("--force-replace", "Force replace existing translations", false)
     .parse(process.argv);
 
   const options = program.opts();
@@ -121,20 +122,29 @@ async function main() {
     // Read source file
     const sourceData = await fs.readJson(options.source);
 
+    // Check if target file exists, if yes, parse it
+    let targetData = {};
+    if (options.output && fs.existsSync(options.output)) {
+      targetData = await fs.readJson(options.output);
+    }
+
     // Show translation info
     console.log(chalk.blue("\nTranslation Details:"));
     console.log(
       chalk.blue(`From: ${LANGUAGES[options.from]} (${options.from})`)
     );
     console.log(chalk.blue(`To: ${LANGUAGES[options.to]} (${options.to})`));
+    console.log(chalk.blue(`Replace existing content ${options.forceReplace}`));
     console.log(chalk.blue("Starting translation...\n"));
 
     // Translate the content
-    const translatedData = await translateObject(
-      sourceData,
-      options.from,
-      options.to
-    );
+    const translatedData = await translateObject({
+      obj: sourceData,
+      translated: targetData,
+      fromLang: options.from,
+      toLang: options.to,
+      replace: options.forceReplace
+    })
 
     // Determine output path
     const outputPath =
