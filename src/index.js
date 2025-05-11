@@ -1,35 +1,12 @@
 #!/usr/bin/env node
 
 import { program } from "commander";
-import translate from "google-translate-api-x";
 import fs from "fs-extra";
 import chalk from "chalk";
 import path from "path";
 import inquirer from "inquirer";
-
-// Define available languages
-const LANGUAGES = {
-  en: "English",
-  es: "Spanish",
-  fr: "French",
-  de: "German",
-  it: "Italian",
-  pt: "Portuguese",
-  ru: "Russian",
-  ja: "Japanese",
-  ko: "Korean",
-  zh: "Chinese",
-  ar: "Arabic",
-  hi: "Hindi",
-  nl: "Dutch",
-  pl: "Polish",
-  tr: "Turkish",
-  vi: "Vietnamese",
-  th: "Thai",
-  sv: "Swedish",
-  da: "Danish",
-  fi: "Finnish",
-};
+import {LANGUAGES} from "./constants.js";
+import {translateObject} from "./translations-manager.js";
 
 async function selectLanguages() {
   const questions = [
@@ -56,33 +33,7 @@ async function selectLanguages() {
   return inquirer.prompt(questions);
 }
 
-async function translateObject({obj, translated={}, fromLang, toLang, replace=false}) {
-  for (const [key, value] of Object.entries(obj)) {
-    if (typeof value === "object" && value !== null) {
-      translated[key] = await translateObject({obj: value, translated: translated[key] || {}, fromLang, toLang, replace});
-    } else if (typeof value === "string") {
-      if (!translated[key] || replace) {
-        try {
-          const result = await translate(value, {
-            from: fromLang,
-            to: toLang,
-          });
-          translated[key] = result.text;
-          console.log(
-              chalk.green(`✓ [${fromLang} → ${toLang}] ${value} → ${result.text}`)
-          );
-        } catch (error) {
-          console.error(chalk.red(`✗ Failed to translate: ${value}`));
-          translated[key] = value;
-        }
-      }
-    } else {
-      translated[key] = value;
-    }
-  }
 
-  return translated;
-}
 
 async function main() {
   program

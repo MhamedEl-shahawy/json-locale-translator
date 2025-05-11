@@ -1,0 +1,28 @@
+name: ci
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+
+jobs:
+  vitest:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v4
+
+      - name: setup node-js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'latest'
+
+      - name: install packages
+        run: npm ci
+
+      - name: Run tests
+        run: npm t
